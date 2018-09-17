@@ -2,26 +2,71 @@
 
 <style type="text/css" media="screen">
 
-.inline-div {
-    display:inline-block;
+.textAreaColumn{
+    width:100%;
 }
-.inline-txtarea {
-    resize: none;
-    border : 2px solid red;
-    height:125px;
+.textAreaColumn div{
+    float:left;
+    width:50%;
+    padding:10px;
+    box-sizing: border-box;
+}
+
+.textAreaColumn div span{
+    display:block;
+    text-align:center;
+}
+
+.textAreaColumn div textarea{
+    box-sizing: border-box;
+    width:100%;
+    border:3px solid red;
+    min-height:800;
 }
 
 </style>
 
 <body>
-  <div class="inline-div">
-      <p align="center">Title 1</p>
-      <textarea cols="15" rows="15" class="inline-txtarea"></textarea>
-  </div>
-  <div class="inline-div">
-  <p align="center">Title 2</p>
-      <textarea cols="15" rows="15" class="inline-txtarea"></textarea>
+  <div align="center">
+    <select>
+      <option value="none">None</option>
+      <option value="nrusin">Nikita</option>
+      <option value="rnabiulin">Rustem</option>
+      <option value="safy">Safy</option>
+      <option value="aklimov">AlexK</option>
+    </select>
+    <div class="textAreaColumn" align="center">
+        <div>
+            <span>Job Description</span>
+            <textarea id="job_text"></textarea>
+            <button id="comeback">Come Back</button>
+        </div>
+        <div>
+            <span>Techs Found</span>
+            <textarea id="found_techs"></textarea>
+            <button id="save">Save</button>
+        </div>
+    </div>
   </div>
 </body>
+
+<script type="text/javascript">
+  job_textarea = document.getElementById("job_text")
+
+  function fetch_new(name){
+    fetch(
+    'https://api.mlab.com/api/1/databases/job_dtnz/collections/job_descriptions?q={"job_id": "10537667"}&apiKey=LQvZpFAypOqcF4Wwt8juHIHMCtjNgXDo')
+    .then(function(resp){
+      return (resp.json())
+    })
+    .then(function(json){
+      job_textarea.value = json[0].job_desc
+    })
+  }
+
+  fetch_new("lel")
+
+
+</script>
 
 </html>
