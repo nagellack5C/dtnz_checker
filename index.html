@@ -28,10 +28,10 @@
 
 <body>
   <div align="center">
-    <select>
+    <select onChange="fetch_new(this.value)" id="analyst">
       <option value="none">None</option>
       <option value="nrusin">Nikita</option>
-      <option value="rnabiulin">Rustem</option>
+      <option value="rnabiullin">Rustem</option>
       <option value="safy">Safy</option>
       <option value="aklimov">AlexK</option>
     </select>
@@ -52,19 +52,75 @@
 
 <script type="text/javascript">
   job_textarea = document.getElementById("job_text")
+  techs_textarea = document.getElementById("found_techs")
+  save_btn = document.getElementById("save")
+  comeback_btn = document.getElementById("comeback")
+  analyst = document.getElementById("analyst")
+  db_url = "https://api.mlab.com/api/1/databases/job_dtnz/collections/job_descriptions"
+  token = "apiKey=LQvZpFAypOqcF4Wwt8juHIHMCtjNgXDo"
+  current_id = ""
+  prev_id = ""
+
+  save_btn.addEventListener("click", save)
+  comeback_btn.addEventListener("click", fetch_by_id)
 
   function fetch_new(name){
+    console.log(current_id, prev_id)
+    if (analyst.value == "none"){
+      job_textarea.value = "Select your name from the list!"
+    } else {
+        console.log("fetching...")
+        prev_id = current_id
+        fetch(
+        db_url + '?q={"name": "' + name + '", "done": "no"}' + "&" + token)
+        .then(function(resp){
+          return (resp.json())
+        })
+        .then(function(json){
+          job_textarea.value = json[0].job_id + "\n" + json[0].job_desc
+          found_techs.value = json[0].techs
+          current_id = json[0]._id.$oid
+      })
+    }
+  }
+
+  function fetch_by_id(){
+    console.log(prev_id, current_id)
     fetch(
-    'https://api.mlab.com/api/1/databases/job_dtnz/collections/job_descriptions?q={"job_id": "10537667"}&apiKey=LQvZpFAypOqcF4Wwt8juHIHMCtjNgXDo')
+    db_url + "/" + prev_id + "?" + token)
     .then(function(resp){
       return (resp.json())
     })
     .then(function(json){
-      job_textarea.value = json[0].job_desc
-    })
+      console.log(json)
+      job_textarea.value = json.job_id + "\n" + json.job_desc
+      found_techs.value = json.techs
+      current_id = json._id.$oid
+  })
   }
 
-  fetch_new("lel")
+  function save(){
+    if (analyst.value != "none"){
+      fetch(
+        db_url + "/" + current_id + "?" + token,
+        {method: "PUT",
+        headers: {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        body: JSON.stringify( { "$set" : { "techs" : techs_textarea.value, "done": "yes" } } ) }
+      ).then(function(resp){
+        console.log(resp)
+      }).then(function(){fetch_new(analyst.value)})
+    } else {
+      job_textarea.value = "Select your name from the list!"
+    }
+  }
+
+  function help(){
+    console.log(analyst.value)
+  }
+
+  // fetch_new("aklimov")
 
 
 </script>
