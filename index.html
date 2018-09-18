@@ -46,6 +46,7 @@ mark {
       <option value="safy">Safy</option>
       <option value="aklimov">AlexK</option>
     </select>
+    <div id="stats"></div>
     <div class="textAreaColumn" align="center">
         <div>
             <span>Job Description</span>
@@ -64,8 +65,6 @@ mark {
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js"></script>
 
 <script type="text/javascript">
-
-
 
   job_textarea = document.getElementById("job_text")
   techs_textarea = document.getElementById("found_techs")
@@ -155,6 +154,26 @@ mark {
     var instance = new Mark(job_textarea);
     instance.markRegExp(/(([ ]?[A-Z][A-Za-z0-9+-]*){1,})/gm)
   }
+
+  const get_counts = async() => {
+    console.log(db_url + '?q={"done": "yes"}' + "&" + token);
+    const response = await fetch(db_url + '?q={"done": "yes"}' + "&" + token);
+    const json = await response.json();
+    analysts = {
+      "nrusin": 0,
+      "rnabiullin": 0,
+      "safy": 0,
+      "aklimov": 0
+    }
+    for (var i in json){
+      analysts[json[i].name] += 1
+    }
+    Object.keys(analysts).forEach(function(name){
+      document.getElementById("stats").innerHTML = document.getElementById("stats").innerHTML + name + ": " + analysts[name] + " "
+    })
+  }
+
+  get_counts();
 
   // fetch_new("aklimov")
 
