@@ -80,7 +80,7 @@ mark {
   comeback_btn.addEventListener("click", fetch_by_id)
 
   function fetch_new(name){
-    console.log(current_id, prev_id)
+    // console.log(current_id, prev_id)
     if (analyst.value == "none"){
       job_textarea.value = "Select your name from the list!"
     } else {
@@ -100,14 +100,14 @@ mark {
   }
 
   function fetch_by_id(){
-    console.log(prev_id, current_id)
+    // console.log(prev_id, current_id)
     fetch(
     db_url + "/" + prev_id + "?" + token)
     .then(function(resp){
       return (resp.json())
     })
     .then(function(json){
-      console.log(json)
+      // console.log(json)
       process_text(json.job_id + "\n" + json.job_desc)
       found_techs.value = json.techs
       current_id = json._id.$oid
@@ -124,7 +124,7 @@ mark {
         },
         body: JSON.stringify( { "$set" : { "techs" : techs_textarea.value, "done": "yes" } } ) }
       ).then(function(resp){
-        console.log(resp)
+        // console.log(resp)
       }).then(function(){fetch_new(analyst.value)})
     } else {
       job_textarea.value = "Select your name from the list!"
@@ -139,7 +139,7 @@ mark {
     marked = document.getElementsByTagName("mark");
     [].forEach.call(marked, function(marked_el){
       marked_el.addEventListener("click", function(event){
-        console.log(event.target.innerHTML)
+        // console.log(event.target.innerHTML)
         if (found_techs.value == "" || found_techs.value == "none"){
           found_techs.value = event.target.innerHTML.trim();
         } else {
@@ -156,7 +156,7 @@ mark {
   }
 
   const get_counts = async() => {
-    console.log(db_url + '?q={"done": "yes"}' + "&" + token);
+    // console.log(db_url + '?q={"done": "yes"}' + "&" + token);
     const response = await fetch(db_url + '?q={"done": "yes"}' + "&" + token);
     const json = await response.json();
     analysts = {
