@@ -125,7 +125,11 @@ mark {
         body: JSON.stringify( { "$set" : { "techs" : techs_textarea.value, "done": "yes" } } ) }
       ).then(function(resp){
         // console.log(resp)
-      }).then(function(){fetch_new(analyst.value)})
+      }).then(function(){
+        fetch_new(analyst.value)
+        analysts[analyst.value] += 1
+        update_stats();
+      })
     } else {
       job_textarea.value = "Select your name from the list!"
     }
@@ -155,19 +159,26 @@ mark {
     instance.markRegExp(/(([ ]?[A-Z][A-Za-z0-9+-]*){1,})/gm)
   }
 
+  analysts = {
+    "nrusin": 0,
+    "rnabiullin": 0,
+    "safy": 0,
+    "aklimov": 0
+  }
+
   const get_counts = async() => {
     // console.log(db_url + '?q={"done": "yes"}' + "&" + token);
     const response = await fetch(db_url + '?q={"done": "yes"}' + "&" + token);
     const json = await response.json();
-    analysts = {
-      "nrusin": 0,
-      "rnabiullin": 0,
-      "safy": 0,
-      "aklimov": 0
-    }
+
     for (var i in json){
       analysts[json[i].name] += 1
     }
+    update_stats();
+  }
+
+  function update_stats(){
+    document.getElementById("stats").innerHTML = ""
     Object.keys(analysts).forEach(function(name){
       document.getElementById("stats").innerHTML = document.getElementById("stats").innerHTML + name + ": " + analysts[name] + " "
     })
