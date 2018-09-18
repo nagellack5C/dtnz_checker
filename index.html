@@ -66,6 +66,8 @@ mark {
 
 <script type="text/javascript">
 
+
+
   console.log("cookies: " + document.cookie);
 
   job_textarea = document.getElementById("job_text")
@@ -81,6 +83,10 @@ mark {
   x = document.cookie;
   if (x.length > 0){
     analyst.value = x.split("=")[1];
+  }
+
+  if (analyst.value != "None"){
+    fetch_new(analyst.value);
   }
 
   save_btn.addEventListener("click", save)
