@@ -87,9 +87,7 @@ mark {
   comeback_btn.addEventListener("click", fetch_by_id)
 
   function fetch_new(name){
-    if (document.cookie.length == 0){
-      document.cookie = "username=" + analyst.value;
-    }
+    document.cookie = "username=" + analyst.value;
     // console.log(current_id, prev_id)
     if (analyst.value == "none"){
       job_textarea.value = "Select your name from the list!"
