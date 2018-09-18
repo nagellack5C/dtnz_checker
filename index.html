@@ -17,11 +17,22 @@
     text-align:center;
 }
 
+.textAreaColumn div div{
+    box-sizing: border-box;
+    width:100%;
+    /* border:3px solid red; */
+    height:80%;
+}
+
 .textAreaColumn div textarea{
     box-sizing: border-box;
     width:100%;
     border:3px solid red;
     height:80%;
+}
+
+mark {
+  cursor: pointer;
 }
 
 </style>
@@ -38,19 +49,24 @@
     <div class="textAreaColumn" align="center">
         <div>
             <span>Job Description</span>
-            <textarea id="job_text"></textarea>
-            <button id="comeback">Come Back</button>
+            <div id="job_text" align="justify"></div>
         </div>
         <div>
             <span>Techs Found</span>
             <textarea id="found_techs"></textarea>
             <button id="save">Save</button>
+            <button id="comeback">Come Back</button>
         </div>
     </div>
   </div>
 </body>
 
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js"></script>
+
 <script type="text/javascript">
+
+
+
   job_textarea = document.getElementById("job_text")
   techs_textarea = document.getElementById("found_techs")
   save_btn = document.getElementById("save")
@@ -77,9 +93,9 @@
           return (resp.json())
         })
         .then(function(json){
-          job_textarea.value = json[0].job_id + "\n" + json[0].job_desc
-          found_techs.value = json[0].techs
-          current_id = json[0]._id.$oid
+          process_text(json[0].job_id + "\n" + json[0].job_desc);
+          found_techs.value = json[0].techs;
+          current_id = json[0]._id.$oid;
       })
     }
   }
@@ -93,7 +109,7 @@
     })
     .then(function(json){
       console.log(json)
-      job_textarea.value = json.job_id + "\n" + json.job_desc
+      process_text(json.job_id + "\n" + json.job_desc)
       found_techs.value = json.techs
       current_id = json._id.$oid
   })
@@ -116,8 +132,27 @@
     }
   }
 
-  function help(){
-    console.log(analyst.value)
+  function process_text(text){
+    var txttostore = '<p>' + text.replace(/\n/g, "</p>\n<p>") + '</p>';
+    // txttostore = txttostore.replace(/(([ ]?[A-Z][A-Za-z0-9+-]*){1,})/gm, "<span class='highlight'>$&</span>")
+    job_textarea.innerHTML = txttostore;
+    highlight_text();
+    marked = document.getElementsByTagName("mark");
+    [].forEach.call(marked, function(marked_el){
+      marked_el.addEventListener("click", function(event){
+        console.log(event.target.innerHTML)
+        if (found_techs.value == "" || found_techs.value == "none"){
+          found_techs.value = event.target.innerHTML.trim();
+        } else {
+          found_techs.value += ", " + event.target.innerHTML.trim();
+        }
+      })
+    })
+  }
+
+  function highlight_text(){
+    var instance = new Mark(job_textarea);
+    instance.markRegExp(/(([ ]?[A-Z][A-Za-z0-9+-]*){1,})/gm)
   }
 
   // fetch_new("aklimov")
