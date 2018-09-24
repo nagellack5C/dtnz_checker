@@ -86,12 +86,7 @@ mark {
   jobs_fetched = {}
   counter = -1
 
-  x = document.cookie;
-  if (x.includes("token")){
-    analyst.value = x.split(";")[0].split("=")[1];
-    token.value = x.split(";")[1].split("=")[1];
-    fetch_all();
-  }
+
 
   save_btn.addEventListener("click", save)
   comeback_btn.addEventListener("click", prev)
@@ -245,6 +240,13 @@ mark {
 
 
   // fetch_new("aklimov")
+
+  x = document.cookie;
+  if (x.includes("token")){
+    analyst.value = x.split(";")[0].split("=")[1];
+    token.value = x.split(";")[1].split("=")[1];
+    fetch_all();
+  }
 
 
 </script>
