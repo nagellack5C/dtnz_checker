@@ -40,6 +40,7 @@ mark {
 
 <body>
   <div align="center">
+    <input id="token" placeholder="enter token"></input>
     <select onChange="fetch_all(this.value)" id="analyst">
       <option value="none">None</option>
       <option value="nrusin">Nikita</option>
@@ -79,7 +80,7 @@ mark {
   next_btn = document.getElementById("next")
   analyst = document.getElementById("analyst")
   db_url = "https://api.mlab.com/api/1/databases/job_dtnz/collections/job_descriptions"
-  token = ""
+  token = document.getElementById("token")
   current_id = ""
   prev_id = ""
   jobs_fetched = {}
@@ -103,7 +104,7 @@ mark {
         console.log("fetching...")
         prev_id = current_id
         fetch(
-        db_url + '?q={"name": "' + name + '", "done": "no"}' + "&" + token)
+        db_url + '?q={"name": "' + name + '", "done": "no"}' + "&" + token.value)
         .then(function(resp){
           return (resp.json())
         })
@@ -124,7 +125,7 @@ mark {
         console.log("fetching...")
         prev_id = current_id
         fetch(
-        db_url + '?q={"name": "' + name + '"}' + "&" + token)
+        db_url + '?q={"name": "' + name + '"}' + "&" + token.value)
         .then(function(resp){
           return (resp.json())
         })
@@ -152,7 +153,7 @@ mark {
   function fetch_by_id(){
     // console.log(prev_id, current_id)
     fetch(
-    db_url + "/" + prev_id + "?" + token)
+    db_url + "/" + prev_id + "?" + token.value)
     .then(function(resp){
       return (resp.json())
     })
@@ -167,7 +168,7 @@ mark {
   function save(){
     if (analyst.value != "none"){
       fetch(
-        db_url + "/" + current_id + "?" + token,
+        db_url + "/" + current_id + "?" + token.value,
         {method: "PUT",
         headers: {
           "Content-Type": "application/json; charset=utf-8"
@@ -218,7 +219,7 @@ mark {
 
   const get_counts = async() => {
     // console.log(db_url + '?q={"done": "yes"}' + "&" + token);
-    const response = await fetch(db_url + '?q={"done": "yes"}' + "&" + token);
+    const response = await fetch(db_url + '?q={"done": "yes"}' + "&" + token.value);
     const json = await response.json();
 
     for (var i in json){
