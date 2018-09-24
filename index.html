@@ -176,7 +176,7 @@ mark {
       ).then(function(resp){
         // console.log(resp)
       }).then(function(){
-        fetch_new(analyst.value)
+        next()
         analysts[analyst.value] += 1
         update_stats();
       })
