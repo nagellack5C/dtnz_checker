@@ -40,7 +40,7 @@ mark {
 
 <body>
   <div align="center">
-    <select onChange="fetch_new(this.value)" id="analyst">
+    <select onChange="fetch_all(this.value)" id="analyst">
       <option value="none">None</option>
       <option value="nrusin">Nikita</option>
       <option value="rnabiullin">Rustem</option>
@@ -58,6 +58,7 @@ mark {
             <textarea id="found_techs"></textarea>
             <button id="comeback">Come Back</button>
             <button id="save">Save</button>
+            <button id="next">Next</button>
         </div>
     </div>
   </div>
@@ -75,11 +76,14 @@ mark {
   techs_textarea = document.getElementById("found_techs")
   save_btn = document.getElementById("save")
   comeback_btn = document.getElementById("comeback")
+  next_btn = document.getElementById("next")
   analyst = document.getElementById("analyst")
   db_url = "https://api.mlab.com/api/1/databases/job_dtnz/collections/job_descriptions"
   token = "apiKey=LQvZpFAypOqcF4Wwt8juHIHMCtjNgXDo"
   current_id = ""
   prev_id = ""
+  jobs_fetched = {}
+  counter = -1
 
   x = document.cookie;
   if (x.length > 0){
@@ -87,7 +91,8 @@ mark {
   }
 
   save_btn.addEventListener("click", save)
-  comeback_btn.addEventListener("click", fetch_by_id)
+  comeback_btn.addEventListener("click", prev)
+  next_btn.addEventListener("click", next)
 
   function fetch_new(name){
     document.cookie = "username=" + analyst.value;
@@ -110,6 +115,40 @@ mark {
     }
   }
 
+  function fetch_all(name){
+    document.cookie = "username=" + analyst.value;
+    // console.log(current_id, prev_id)
+    if (analyst.value == "none"){
+      job_textarea.value = "Select your name from the list!"
+    } else {
+        console.log("fetching...")
+        prev_id = current_id
+        fetch(
+        db_url + '?q={"name": "' + name + '"}' + "&" + token)
+        .then(function(resp){
+          return (resp.json())
+        })
+        .then(function(json){
+          jobs_fetched = json;
+          next();
+      })
+    }
+  }
+
+  function next(){
+    counter ++;
+    process_text(jobs_fetched[counter].job_id + "\n" + jobs_fetched[counter].job_desc);
+    found_techs.value = jobs_fetched[counter].techs;
+    current_id = jobs_fetched[counter]._id.$oid;
+  }
+
+  function prev(){
+    counter --;
+    process_text(jobs_fetched[counter].job_id + "\n" + jobs_fetched[counter].job_desc);
+    found_techs.value = jobs_fetched[counter].techs;
+    current_id = jobs_fetched[counter]._id.$oid;
+  }
+
   function fetch_by_id(){
     // console.log(prev_id, current_id)
     fetch(
@@ -122,7 +161,7 @@ mark {
       process_text(json.job_id + "\n" + json.job_desc)
       found_techs.value = json.techs
       current_id = json._id.$oid
-  })
+    })
   }
 
   function save(){
