@@ -114,7 +114,6 @@ mark {
   }
 
   function fetch_all(name){
-    get_counts();
     document.cookie = "username=" + analyst.value;
     document.cookie = "token=" + token.value;
     // console.log(current_id, prev_id)
@@ -245,6 +244,7 @@ mark {
   if (x.includes("token")){
     analyst.value = x.split(";")[0].split("=")[1];
     token.value = x.split(";")[1].split("=")[1];
+    get_counts();
     fetch_all();
   }
 
