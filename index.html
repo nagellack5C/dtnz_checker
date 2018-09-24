@@ -29,7 +29,7 @@
     box-sizing: border-box;
     width:100%;
     border:3px solid red;
-    height:80%;
+    height:30%;
 }
 
 mark {
@@ -60,6 +60,9 @@ mark {
             <button id="comeback">Come Back</button>
             <button id="save">Save</button>
             <button id="next">Next</button>
+            <span>&nbsp;</span>
+            <span>Not matched</span>
+            <div id="not_found" align="justify" style="height:30%"></div>
         </div>
     </div>
   </div>
@@ -136,16 +139,17 @@ mark {
 
   function next(){
     counter ++;
-    process_text(jobs_fetched[counter].job_id + "\n" + jobs_fetched[counter].job_desc);
     found_techs.value = jobs_fetched[counter].techs;
     current_id = jobs_fetched[counter]._id.$oid;
+    list_of_non_matched(jobs_fetched[counter].job_desc, jobs_fetched[counter].techs);
+    process_text(jobs_fetched[counter].job_id + "\n" + jobs_fetched[counter].job_desc);
   }
 
   function prev(){
     counter --;
-    process_text(jobs_fetched[counter].job_id + "\n" + jobs_fetched[counter].job_desc);
     found_techs.value = jobs_fetched[counter].techs;
     current_id = jobs_fetched[counter]._id.$oid;
+    process_text(jobs_fetched[counter].job_id + "\n" + jobs_fetched[counter].job_desc);
   }
 
   function fetch_by_id(){
@@ -165,7 +169,7 @@ mark {
 
   function save(){
     if (analyst.value != "none"){
-      jobs_fetched[counter].techs = techs_textarea.value;
+      jobs_fetched[counter].techs = found_techs.value;
       jobs_fetched[counter].done = "yes";
       fetch(
         db_url + "/" + current_id + "?apiKey=" + token.value,
@@ -208,6 +212,8 @@ mark {
   function highlight_text(){
     var instance = new Mark(job_textarea);
     instance.markRegExp(/(([ ]?[A-Z][A-Za-z0-9+-]*){1,})/gm)
+    var instance2 = new Mark(not_found);
+    instance2.markRegExp(/(([ ]?[A-Z][A-Za-z0-9+-]*){1,})/gm)
   }
 
   analysts = {
@@ -238,6 +244,21 @@ mark {
   // if (analyst.value != "None"){
   //   fetch_new(analyst.value);
   // }
+
+  function list_of_non_matched(jobtext, techs){
+    console.log("test")
+    matched = jobtext.match(/(([ ]?[A-Z][A-Za-z0-9+-]*){1,})/g)
+    non_listed = new Set([])
+    for (var i in matched){
+      matched[i] = matched[i].trim()
+      // console.log(techs.split(", "))
+      if (!techs.toLowerCase().split(", ").includes(matched[i].toLowerCase())){
+        non_listed.add(matched[i])
+      }
+    }
+    non_listed = Array.from(non_listed)
+    not_found.innerHTML = non_listed.join(" | ")
+  }
 
 
   // fetch_new("aklimov")
