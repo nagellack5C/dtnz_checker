@@ -266,7 +266,7 @@ mark {
 
   x = document.cookie.split(";");
   for (var i in x){
-    if (x[i]).includes("token"){
+    if (x[i].includes("token")){
       token.value = x[i].split("=")[1]
     } else {
       analyst.value = x[i].split("=")[1]
