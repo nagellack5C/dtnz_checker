@@ -87,7 +87,7 @@ mark {
   counter = -1
 
   x = document.cookie;
-  if (x.length > 0){
+  if (x.includes("token")){
     analyst.value = x.split(";")[0].split("=")[1]
     token.value = x.split(";")[1].split("=")[1]
   }
