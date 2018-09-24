@@ -165,6 +165,8 @@ mark {
 
   function save(){
     if (analyst.value != "none"){
+      jobs_fetched[counter].techs = techs_textarea.value;
+      jobs_fetched[counter].done = "yes";
       fetch(
         db_url + "/" + current_id + "?apiKey=" + token.value,
         {method: "PUT",
