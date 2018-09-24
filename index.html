@@ -88,8 +88,9 @@ mark {
 
   x = document.cookie;
   if (x.includes("token")){
-    analyst.value = x.split(";")[0].split("=")[1]
-    token.value = x.split(";")[1].split("=")[1]
+    analyst.value = x.split(";")[0].split("=")[1];
+    token.value = x.split(";")[1].split("=")[1];
+    fetch_all();
   }
 
   save_btn.addEventListener("click", save)
