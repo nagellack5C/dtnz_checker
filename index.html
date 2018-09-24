@@ -88,7 +88,8 @@ mark {
 
   x = document.cookie;
   if (x.length > 0){
-    analyst.value = x.split("=")[1];
+    analyst.value = x.split(";")[0].split("=")[1]
+    token.value = x.split(";")[1].split("=")[1]
   }
 
   save_btn.addEventListener("click", save)
@@ -97,6 +98,7 @@ mark {
 
   function fetch_new(name){
     document.cookie = "username=" + analyst.value;
+    document.cookie = "token=" + token.value;
     // console.log(current_id, prev_id)
     if (analyst.value == "none"){
       job_textarea.value = "Select your name from the list!"
@@ -104,7 +106,7 @@ mark {
         console.log("fetching...")
         prev_id = current_id
         fetch(
-        db_url + '?q={"name": "' + name + '", "done": "no"}' + "&" + token.value)
+        db_url + '?q={"name": "' + name + '", "done": "no"}' + "&apiKey=" + token.value)
         .then(function(resp){
           return (resp.json())
         })
@@ -117,6 +119,7 @@ mark {
   }
 
   function fetch_all(name){
+    get_counts();
     document.cookie = "username=" + analyst.value;
     // console.log(current_id, prev_id)
     if (analyst.value == "none"){
@@ -125,7 +128,7 @@ mark {
         console.log("fetching...")
         prev_id = current_id
         fetch(
-        db_url + '?q={"name": "' + name + '"}' + "&" + token.value)
+        db_url + '?q={"name": "' + name + '"}' + "&apiKey=" + token.value)
         .then(function(resp){
           return (resp.json())
         })
@@ -153,7 +156,7 @@ mark {
   function fetch_by_id(){
     // console.log(prev_id, current_id)
     fetch(
-    db_url + "/" + prev_id + "?" + token.value)
+    db_url + "/" + prev_id + "?apiKey=" + token.value)
     .then(function(resp){
       return (resp.json())
     })
@@ -168,7 +171,7 @@ mark {
   function save(){
     if (analyst.value != "none"){
       fetch(
-        db_url + "/" + current_id + "?" + token.value,
+        db_url + "/" + current_id + "?apiKey=" + token.value,
         {method: "PUT",
         headers: {
           "Content-Type": "application/json; charset=utf-8"
@@ -219,7 +222,7 @@ mark {
 
   const get_counts = async() => {
     // console.log(db_url + '?q={"done": "yes"}' + "&" + token);
-    const response = await fetch(db_url + '?q={"done": "yes"}' + "&" + token.value);
+    const response = await fetch(db_url + '?q={"done": "yes"}' + "&apiKey=" + token.value);
     const json = await response.json();
 
     for (var i in json){
@@ -239,7 +242,6 @@ mark {
   //   fetch_new(analyst.value);
   // }
 
-  get_counts();
 
   // fetch_new("aklimov")
 
