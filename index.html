@@ -98,7 +98,6 @@ mark {
 
   function fetch_new(name){
     document.cookie = "username=" + analyst.value;
-    document.cookie = "token=" + token.value;
     // console.log(current_id, prev_id)
     if (analyst.value == "none"){
       job_textarea.value = "Select your name from the list!"
@@ -121,6 +120,7 @@ mark {
   function fetch_all(name){
     get_counts();
     document.cookie = "username=" + analyst.value;
+    document.cookie = "token=" + token.value;
     // console.log(current_id, prev_id)
     if (analyst.value == "none"){
       job_textarea.value = "Select your name from the list!"
