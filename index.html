@@ -43,7 +43,7 @@ mark {
     <input id="token" placeholder="enter token"></input>
     <select onChange="fetch_all(this.value)" id="analyst">
       <option value="none">None</option>
-      <option value="sabanin">Sabanin</option>
+      <option value="asabanin">Sabanin</option>
       <option value="tsvetkov">Tsvetkov</option>
       <option value="aklimov">Klimov</option>
     </select>
@@ -264,12 +264,13 @@ mark {
 
   // fetch_new("aklimov")
 
-  x = document.cookie;
-  if (x.includes("token")){
-    analyst.value = x.split(";")[0].split("=")[1];
-    token.value = x.split(";")[1].split("=")[1];
-    get_counts();
-    fetch_all(analyst.value);
+  x = document.cookie.split(";");
+  for (var i in x){
+    if (x[i]).includes("token"){
+      token.value = x[i].split("=")[1]
+    } else {
+      analust.value = x[i].split("=")[1]
+    }
   }
 
 
