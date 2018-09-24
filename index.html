@@ -125,7 +125,7 @@ mark {
         console.log("fetching...")
         prev_id = current_id
         fetch(
-        db_url + '?q={"name": "' + name + '"}' + "&apiKey=" + token.value)
+        db_url + '?q={"name": "' + name + '", "done": "no"}' + "&apiKey=" + token.value)
         .then(function(resp){
           return (resp.json())
         })
