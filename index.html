@@ -57,9 +57,9 @@ mark {
         <div>
             <span>Techs Found</span>
             <textarea id="found_techs"></textarea>
-            <button id="comeback">Come Back</button>
+            <button id="comeback"><</button>
             <button id="save">Save</button>
-            <button id="next">Next</button>
+            <button id="next">></button>
             <span>&nbsp;</span>
             <span>Not matched</span>
             <div id="not_found" align="justify" style="height:30%"></div>
@@ -147,8 +147,11 @@ mark {
 
   function prev(){
     counter --;
+    console.log(jobs_fetched[counter])
+    console.log(jobs_fetched)
     found_techs.value = jobs_fetched[counter].techs;
     current_id = jobs_fetched[counter]._id.$oid;
+    list_of_non_matched(jobs_fetched[counter].job_desc, jobs_fetched[counter].techs);
     process_text(jobs_fetched[counter].job_id + "\n" + jobs_fetched[counter].job_desc);
   }
 
