@@ -122,7 +122,7 @@ mark {
     if (analyst.value == "none"){
       job_textarea.value = "Select your name from the list!"
     } else {
-        console.log("fetching...")
+        console.log("fetching jobs...")
         prev_id = current_id
         fetch(
         db_url + '?q={"name": "' + name + '", "done": "no"}' + "&apiKey=" + token.value)
@@ -226,6 +226,7 @@ mark {
 
   const get_counts = async() => {
     // console.log(db_url + '?q={"done": "yes"}' + "&" + token);
+    console.log("fetching counts...")
     const response = await fetch(db_url + '?q={"done": "yes"}' + "&apiKey=" + token.value);
     const json = await response.json();
 
