@@ -125,7 +125,8 @@ mark {
         console.log("fetching jobs...")
         prev_id = current_id
         fetch(
-        db_url + '?q={"name": "' + name + '", "done": "no"}' + "&apiKey=" + token.value)
+        // db_url + '?q={"name": "' + name + '", "done": "no"}' + "&apiKey=" + token.value)
+        db_url + '?q={"analyst": "' + name + '", "checked": "no"}' + "&apiKey=" + token.value)
         .then(function(resp){
           return (resp.json())
         })
@@ -179,7 +180,8 @@ mark {
         headers: {
           "Content-Type": "application/json; charset=utf-8"
         },
-        body: JSON.stringify( { "$set" : { "techs" : techs_textarea.value, "done": "yes" } } ) }
+        // body: JSON.stringify( { "$set" : { "techs" : techs_textarea.value, "done": "yes" } } ) }
+        body: JSON.stringify( { "$set" : { "techs" : techs_textarea.value, "checked": "yes" } } ) }
       ).then(function(resp){
         // console.log(resp)
       }).then(function(){
