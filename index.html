@@ -268,11 +268,13 @@ mark {
   for (var i in x){
     if (x[i].includes("token")){
       token.value = x[i].split("=")[1]
+      get_counts()
     } else {
       analyst.value = x[i].split("=")[1]
       fetch_all(analyst.value)
     }
   }
+
 
 
 </script>
