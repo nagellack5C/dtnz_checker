@@ -118,6 +118,9 @@ mark {
   function fetch_all(name){
     document.cookie = "username=" + analyst.value;
     document.cookie = "token=" + token.value;
+    if ("counter" not in document.cookie){
+      document.cookie = "counter=0"
+    }
     // console.log(current_id, prev_id)
     if (analyst.value == "none"){
       job_textarea.value = "Select your name from the list!"
@@ -126,7 +129,7 @@ mark {
         prev_id = current_id
         fetch(
         // db_url + '?q={"name": "' + name + '", "done": "no"}' + "&apiKey=" + token.value)
-        db_url + '?q={"analyst": "' + name + '", "checked": "no"}' + "&apiKey=" + token.value)
+        db_url + '?q={"analyst": "' + name + '"}' + "&apiKey=" + token.value)
         .then(function(resp){
           return (resp.json())
         })
@@ -195,6 +198,7 @@ mark {
   }
 
   function process_text(text){
+    document.cookie = "counter=0"
     var txttostore = '<p>' + text.replace(/\n/g, "</p>\n<p>") + '</p>';
     // txttostore = txttostore.replace(/(([ ]?[A-Z][A-Za-z0-9+-]*){1,})/gm, "<span class='highlight'>$&</span>")
     job_textarea.innerHTML = txttostore;
@@ -211,6 +215,7 @@ mark {
         event.target.style.backgroundColor = "orange";
       })
     })
+    console.log(jobs_fetched[counter].checked)
   }
 
   function highlight_text(){
@@ -275,6 +280,9 @@ mark {
     } else {
       analyst.value = x[i].split("=")[1]
       fetch_all(analyst.value)
+    }
+    if (x[i].includes("counter")){
+      counter = x[i].split("=")[1];
     }
   }
 
