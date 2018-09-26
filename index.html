@@ -216,6 +216,9 @@ mark {
       })
     })
     console.log(jobs_fetched[counter].checked)
+    if (jobs_fetched[counter].checked == "yes"){
+      found_techs.style.border = "3x solid green"
+    }
   }
 
   function highlight_text(){
