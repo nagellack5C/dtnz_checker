@@ -118,9 +118,6 @@ mark {
   function fetch_all(name){
     document.cookie = "username=" + analyst.value;
     document.cookie = "token=" + token.value;
-    if (!x[i].includes("cookie")){
-      document.cookie = "counter=0"
-    }
     // console.log(current_id, prev_id)
     if (analyst.value == "none"){
       job_textarea.value = "Select your name from the list!"
@@ -198,7 +195,7 @@ mark {
   }
 
   function process_text(text){
-    document.cookie = "counter=0"
+    // document.cookie = "counter=0"
     var txttostore = '<p>' + text.replace(/\n/g, "</p>\n<p>") + '</p>';
     // txttostore = txttostore.replace(/(([ ]?[A-Z][A-Za-z0-9+-]*){1,})/gm, "<span class='highlight'>$&</span>")
     job_textarea.innerHTML = txttostore;
@@ -285,7 +282,7 @@ mark {
       fetch_all(analyst.value)
     }
     if (x[i].includes("counter")){
-      counter = x[i].split("=")[1];
+      counter = x[i].split("=")[1] - 1;
     }
   }
 
