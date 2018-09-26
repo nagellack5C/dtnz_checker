@@ -238,7 +238,7 @@ mark {
     const json = await response.json();
 
     for (var i in json){
-      analysts[json[i].name] += 1
+      analysts[json[i].analyst] += 1
     }
     update_stats();
   }
