@@ -44,7 +44,7 @@ mark {
     <select onChange="fetch_all(this.value)" id="analyst">
       <option value="none">None</option>
       <option value="asabanin">Sabanin</option>
-      <option value="tsvetkov">Tsvetkov</option>
+      <!-- <option value="tsvetkov">Tsvetkov</option> -->
       <option value="aklimov">Klimov</option>
     </select>
     <div id="stats"></div>
@@ -222,14 +222,14 @@ mark {
 
   analysts = {
     "asabanin": 0,
-    "tsvetkov": 0,
+    // "tsvetkov": 0,
     "aklimov": 0
   }
 
   const get_counts = async() => {
     // console.log(db_url + '?q={"done": "yes"}' + "&" + token);
     console.log("fetching counts...")
-    const response = await fetch(db_url + '?q={"done": "yes"}' + "&apiKey=" + token.value);
+    const response = await fetch(db_url + '?q={"checked": "yes"}' + "&apiKey=" + token.value);
     const json = await response.json();
 
     for (var i in json){
