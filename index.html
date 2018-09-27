@@ -230,6 +230,7 @@ for (var i in x){
   if (x[i].includes("username")){
     console.log(x[i])
     analyst = x[i].split("=")[1];
+    analyst.value = analyst;
   }
   if (x[i].includes("counter")){
     counter = x[i].split("=")[1] - 1;
