@@ -241,13 +241,13 @@ mark {
     non_listed = new Set([])
     for (var i in matched){
       matched[i] = matched[i].trim()
-      if (!techs.toLowerCase().split(", ").includes(matched[i].toLowerCase()) && !matched_not_found.join(",").toLowerCase().split(",").includes(matched[i].toLowerCase())){
+      if (!techs.split(", ").includes(matched[i])
+          && !matched_not_found.join(",").split(",").includes(matched[i])){
         non_listed.add(matched[i])
       }
     }
     non_listed = Array.from(non_listed)
     not_found.innerHTML = non_listed.join(" | ")
-    return non_listed
   }
 
   function markify(text){
