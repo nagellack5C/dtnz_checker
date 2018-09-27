@@ -47,6 +47,7 @@ mark {
       <option value="aklimov">Klimov</option>
     </select>
     <div id="stats"></div>
+    <div id="nav"></div>
     <div class="textAreaColumn" align="center">
         <div>
             <span>Job Description</span>
@@ -119,6 +120,7 @@ mark {
       counter = 0
     }
     console.log(counter)
+    nav.innerHTML = counter + "/" + Object.keys(jobs_fetched).length
     document.cookie = "counter=" + counter;
     found_techs.value = jobs_fetched[counter].techs;
     current_id = jobs_fetched[counter]._id.$oid;
