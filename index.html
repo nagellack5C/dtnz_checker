@@ -41,7 +41,7 @@ mark {
 <body>
   <div align="center">
     <input id="token" placeholder="enter token"></input>
-    <select onChange="fetch_all(this.value)" id="analyst">
+    <select onChange="fetch_all(this.value)" id="analyst_name">
       <option value="none">None</option>
       <option value="asabanin">Sabanin</option>
       <option value="aklimov">Klimov</option>
@@ -230,7 +230,7 @@ for (var i in x){
   if (x[i].includes("username")){
     console.log(x[i])
     analyst = x[i].split("=")[1];
-    analyst.value = analyst;
+    analyst_name.value = analyst;
   }
   if (x[i].includes("counter")){
     counter = x[i].split("=")[1] - 1;
