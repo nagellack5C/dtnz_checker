@@ -232,6 +232,7 @@ for (var i in x){
     console.log(x[i])
     analyst = x[i].split("=")[1];
     analyst_name.value = analyst;
+    fetch_all(analyst)
   }
   if (x[i].includes("counter")){
     counter = x[i].split("=")[1] - 1;
