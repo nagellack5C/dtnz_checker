@@ -40,7 +40,7 @@ mark {
 
 <body>
   <div align="center">
-    <input id="token" placeholder="enter token"></input>
+    <input id="token" placeholder="enter token" value="LQvZpFAypOqcF4Wwt8juHIHMCtjNgXDo"></input>
     <select onChange="fetch_all(this.value)" id="analyst_name">
       <option value="none" selected="selected">None</option>
       <option value="asabanin">Sabanin</option>
@@ -60,8 +60,11 @@ mark {
             <button id="save">Save</button>
             <button id="next">></button>
             <span>&nbsp;</span>
+            <span>Matched, not found</span>
+            <div id="diff" align="justify" style="height:25%"></div>
+            <span>&nbsp;</span>
             <span>Not matched</span>
-            <div id="not_found" align="justify" style="height:30%"></div>
+            <div id="not_found" align="justify" style="height:25%"></div>
         </div>
     </div>
   </div>
@@ -81,6 +84,8 @@ mark {
   db_url = "https://api.mlab.com/api/1/databases/job_dtnz/collections/job_descriptions"
   token = document.getElementById("token")
   jobs_fetched = {}
+  all_techs = []
+  matched_not_found = []
   counter = -1
   analysts = {
     "asabanin": 0,
@@ -94,7 +99,8 @@ mark {
   function fetch_all(name){
     document.cookie = "username=" + analyst_name.value;
     document.cookie = "token=" + token.value;
-    if (analyst.value == "none"){
+    get_all_techs();
+    if (analyst_name.value == "none"){
       job_textarea.value = "Select your name from the list!"
     } else {
         console.log("fetching jobs...")
@@ -122,6 +128,7 @@ mark {
     nav.innerHTML = (parseInt(counter) + 1) + "/" + Object.keys(jobs_fetched).length
     document.cookie = "counter=" + counter;
     found_techs.value = jobs_fetched[counter].techs;
+    compare();
     list_of_non_matched(jobs_fetched[counter].job_desc, jobs_fetched[counter].techs);
     process_text(jobs_fetched[counter].job_id + "\n" + jobs_fetched[counter].job_desc);
     if (jobs_fetched[counter].checked == "yes"){
@@ -164,6 +171,19 @@ mark {
     }
   }
 
+  function compare(){
+    mnf = []
+    for (var i in all_techs){
+      if (jobs_fetched[counter].job_desc.replace(/\n:,./gm, " ").split(" ").includes(all_techs[i])){
+        if (!found_techs.value.split(", ").includes(all_techs[i])){
+          matched_not_found.push(all_techs[i])
+          mnf.push(markify(all_techs[i]))
+        }
+      }
+    }
+    diff.innerHTML = mnf.join(", ")
+  }
+
 ///////////////SERVICE/DRAWING FUNCTIONS, DO NOT CHANGE///////////////
 
   const get_counts = async() => {
@@ -176,6 +196,13 @@ mark {
     update_stats();
   }
 
+  const get_all_techs = async() => {
+    console.log("fetching all techs...");
+    const response = await fetch(db_url + '?q={"type": "all_techs"}' + "&apiKey=" + token.value);
+    const json = await response.json();
+    all_techs = json[0].techs.split(",")
+  }
+
   function update_stats(){
     document.getElementById("stats").innerHTML = ""
     Object.keys(analysts).forEach(function(name){
@@ -184,59 +211,66 @@ mark {
   }
 
 
-function process_text(text){
-  var txttostore = '<p>' + text.replace(/\n/g, "</p>\n<p>") + '</p>';
-  job_textarea.innerHTML = txttostore;
-  highlight_text();
-  marked = document.getElementsByTagName("mark");
-  [].forEach.call(marked, function(marked_el){
-    marked_el.addEventListener("click", function(event){
-      if (found_techs.value == "" || found_techs.value == "none"){
-        found_techs.value = event.target.innerHTML.trim();
-      } else {
-        found_techs.value += ", " + event.target.innerHTML.trim();
-      }
-      event.target.style.backgroundColor = "orange";
+  function process_text(text){
+    var txttostore = '<p>' + text.replace(/\n/g, "</p>\n<p>") + '</p>';
+    job_textarea.innerHTML = txttostore;
+    highlight_text();
+    marked = document.getElementsByTagName("mark");
+    [].forEach.call(marked, function(marked_el){
+      marked_el.addEventListener("click", function(event){
+        if (found_techs.value == "" || found_techs.value == "none"){
+          found_techs.value = event.target.innerHTML.trim();
+        } else {
+          found_techs.value += ", " + event.target.innerHTML.trim();
+        }
+        event.target.style.backgroundColor = "orange";
+      })
     })
-  })
-}
+  }
 
-function highlight_text(){
-  var instance = new Mark(job_textarea);
-  instance.markRegExp(/(([ ]?[A-Z][A-Za-z0-9+-]*){1,})/gm)
-  var instance2 = new Mark(not_found);
-  instance2.markRegExp(/(([ ]?[A-Z][A-Za-z0-9+-]*){1,})/gm)
-}
+  function highlight_text(){
+    var instance = new Mark(job_textarea);
+    instance.markRegExp(/(([ ]?[A-Z][A-Za-z0-9+-]*){1,})/gm)
+    var instance2 = new Mark(not_found);
+    instance2.markRegExp(/(([ ]?[A-Z][A-Za-z0-9+-]*){1,})/gm)
+  }
 
-function list_of_non_matched(jobtext, techs){
-  matched = jobtext.match(/(([ ]?[A-Z][A-Za-z0-9+-]*){1,})/g)
-  non_listed = new Set([])
-  for (var i in matched){
-    matched[i] = matched[i].trim()
-    if (!techs.toLowerCase().split(", ").includes(matched[i].toLowerCase())){
-      non_listed.add(matched[i])
+  function list_of_non_matched(jobtext, techs){
+    console.log(matched_not_found);
+    matched = jobtext.match(/(([ ]?[A-Z][A-Za-z0-9+-]*){1,})/g)
+    non_listed = new Set([])
+    for (var i in matched){
+      matched[i] = matched[i].trim()
+      if (!techs.toLowerCase().split(", ").includes(matched[i].toLowerCase()) && !matched_not_found.join(",").toLowerCase().split(",").includes(matched[i].toLowerCase())){
+        non_listed.add(matched[i])
+      }
+    }
+    non_listed = Array.from(non_listed)
+    not_found.innerHTML = non_listed.join(" | ")
+    return non_listed
+  }
+
+  function markify(text){
+    text = '<mark data-markjs="true">' + text + "</mark>";
+    return text;
+  }
+
+  x = document.cookie.split(";");
+  for (var i in x){
+    if (x[i].includes("token")){
+      token.value = x[i].split("=")[1]
+      get_counts()
+    }
+    if (x[i].includes("username")){
+      console.log(x[i])
+      analyst = x[i].split("=")[1];
+      analyst_name.value = analyst;
+      fetch_all(analyst)
+    }
+    if (x[i].includes("counter")){
+      counter = x[i].split("=")[1];
     }
   }
-  non_listed = Array.from(non_listed)
-  not_found.innerHTML = non_listed.join(" | ")
-}
-
-x = document.cookie.split(";");
-for (var i in x){
-  if (x[i].includes("token")){
-    token.value = x[i].split("=")[1]
-    get_counts()
-  }
-  if (x[i].includes("username")){
-    console.log(x[i])
-    analyst = x[i].split("=")[1];
-    analyst_name.value = analyst;
-    fetch_all(analyst)
-  }
-  if (x[i].includes("counter")){
-    counter = x[i].split("=")[1];
-  }
-}
 
 
 
