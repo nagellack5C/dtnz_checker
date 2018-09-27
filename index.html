@@ -155,7 +155,7 @@ mark {
         // body: JSON.stringify( { "$set" : { "techs" : techs_textarea.value, "done": "yes" } } ) }
         body: JSON.stringify( { "$set" : { "techs" : techs_textarea.value, "checked": "yes" } } ) }
       ).then(function(){
-        jobs_fetched[counter].checked == "yes";
+        jobs_fetched[counter].checked = "yes";
         next();
         analysts[analyst_name.value] += 1;
         update_stats();
