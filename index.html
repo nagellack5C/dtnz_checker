@@ -174,7 +174,7 @@ mark {
   function compare(){
     mnf = []
     for (var i in all_techs){
-      if (jobs_fetched[counter].job_desc.toLowerCase().includes(all_techs[i].toLowerCase())){
+      if (jobs_fetched[counter].job_desc.includes(all_techs[i])){
         if (!found_techs.value.split(", ").includes(all_techs[i])){
           matched_not_found.push(all_techs[i])
           mnf.push(markify(all_techs[i]))
