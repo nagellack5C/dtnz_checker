@@ -119,6 +119,7 @@ mark {
       counter = 0
     }
     console.log(counter)
+    document.cookie = "counter=" + counter;
     found_techs.value = jobs_fetched[counter].techs;
     current_id = jobs_fetched[counter]._id.$oid;
     list_of_non_matched(jobs_fetched[counter].job_desc, jobs_fetched[counter].techs);
