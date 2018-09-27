@@ -80,8 +80,6 @@ mark {
   next_btn = document.getElementById("next")
   db_url = "https://api.mlab.com/api/1/databases/job_dtnz/collections/job_descriptions"
   token = document.getElementById("token")
-  current_id = ""
-  prev_id = ""
   jobs_fetched = {}
   counter = -1
   analysts = {
@@ -100,7 +98,6 @@ mark {
       job_textarea.value = "Select your name from the list!"
     } else {
         console.log("fetching jobs...")
-        prev_id = current_id
         fetch(
         // db_url + '?q={"name": "' + name + '", "done": "no"}' + "&apiKey=" + token.value)
         db_url + '?q={"analyst": "' + name + '"}' + "&apiKey=" + token.value)
@@ -116,13 +113,15 @@ mark {
 
   function show_data(){
     if (counter < 0){
-      counter = 0
+      counter = 0;
+    }
+    if (counter > Object.keys(jobs_fetched).length - 1){
+      counter = Object.keys(jobs_fetched).length - 1;
     }
     console.log(counter)
     nav.innerHTML = (counter + 1) + "/" + Object.keys(jobs_fetched).length
     document.cookie = "counter=" + counter;
     found_techs.value = jobs_fetched[counter].techs;
-    current_id = jobs_fetched[counter]._id.$oid;
     list_of_non_matched(jobs_fetched[counter].job_desc, jobs_fetched[counter].techs);
     process_text(jobs_fetched[counter].job_id + "\n" + jobs_fetched[counter].job_desc);
     if (jobs_fetched[counter].checked == "yes"){
@@ -235,7 +234,7 @@ for (var i in x){
     fetch_all(analyst)
   }
   if (x[i].includes("counter")){
-    counter = x[i].split("=")[1] - 1;
+    counter = x[i].split("=")[1];
   }
 }
 
