@@ -94,7 +94,7 @@ mark {
   next_btn.addEventListener("click", next)
 
   function fetch_all(name){
-    document.cookie = "username=" + analyst.value;
+    document.cookie = "username=" + analyst_name.value;
     document.cookie = "token=" + token.value;
     if (analyst.value == "none"){
       job_textarea.value = "Select your name from the list!"
@@ -143,7 +143,7 @@ mark {
   }
 
   function save(){
-    if (analyst.value != "none"){
+    if (analyst_name.value != "none"){
       jobs_fetched[counter].techs = found_techs.value;
       fetch(
         db_url + "/" + jobs_fetched[counter]._id.$oid + "?apiKey=" + token.value,
@@ -156,7 +156,7 @@ mark {
       ).then(function(){
         jobs_fetched[counter].checked == "yes";
         next();
-        analysts[analyst.value] += 1;
+        analysts[analyst_name.value] += 1;
         update_stats();
       })
     } else {
