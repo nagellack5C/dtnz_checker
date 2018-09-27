@@ -44,7 +44,6 @@ mark {
     <select onChange="fetch_all(this.value)" id="analyst">
       <option value="none">None</option>
       <option value="asabanin">Sabanin</option>
-      <!-- <option value="tsvetkov">Tsvetkov</option> -->
       <option value="aklimov">Klimov</option>
     </select>
     <div id="stats"></div>
@@ -71,8 +70,6 @@ mark {
 
 <script type="text/javascript">
 
-
-
   console.log("cookies: " + document.cookie);
 
   job_textarea = document.getElementById("job_text")
@@ -87,8 +84,10 @@ mark {
   prev_id = ""
   jobs_fetched = {}
   counter = -1
-
-
+  analysts = {
+    "asabanin": 0,
+    "aklimov": 0
+  }
 
   save_btn.addEventListener("click", save)
   prev_btn.addEventListener("click", prev)
@@ -97,7 +96,6 @@ mark {
   function fetch_all(name){
     document.cookie = "username=" + analyst.value;
     document.cookie = "token=" + token.value;
-    // console.log(current_id, prev_id)
     if (analyst.value == "none"){
       job_textarea.value = "Select your name from the list!"
     } else {
@@ -117,6 +115,10 @@ mark {
   }
 
   function show_data(){
+    if (counter < 0){
+      counter = 0
+    }
+    console.log(counter)
     found_techs.value = jobs_fetched[counter].techs;
     current_id = jobs_fetched[counter]._id.$oid;
     list_of_non_matched(jobs_fetched[counter].job_desc, jobs_fetched[counter].techs);
@@ -141,7 +143,6 @@ mark {
   function save(){
     if (analyst.value != "none"){
       jobs_fetched[counter].techs = found_techs.value;
-      // jobs_fetched[counter].done = "yes";
       fetch(
         db_url + "/" + jobs_fetched[counter]._id.$oid + "?apiKey=" + token.value,
         {method: "PUT",
@@ -161,36 +162,7 @@ mark {
     }
   }
 
-  function process_text(text){
-    var txttostore = '<p>' + text.replace(/\n/g, "</p>\n<p>") + '</p>';
-    job_textarea.innerHTML = txttostore;
-    highlight_text();
-    marked = document.getElementsByTagName("mark");
-    [].forEach.call(marked, function(marked_el){
-      marked_el.addEventListener("click", function(event){
-        // console.log(event.target.innerHTML)
-        if (found_techs.value == "" || found_techs.value == "none"){
-          found_techs.value = event.target.innerHTML.trim();
-        } else {
-          found_techs.value += ", " + event.target.innerHTML.trim();
-        }
-        event.target.style.backgroundColor = "orange";
-      })
-    })
-    console.log(jobs_fetched[counter].checked)
-  }
-
-  function highlight_text(){
-    var instance = new Mark(job_textarea);
-    instance.markRegExp(/(([ ]?[A-Z][A-Za-z0-9+-]*){1,})/gm)
-    var instance2 = new Mark(not_found);
-    instance2.markRegExp(/(([ ]?[A-Z][A-Za-z0-9+-]*){1,})/gm)
-  }
-
-  analysts = {
-    "asabanin": 0,
-    "aklimov": 0
-  }
+///////////////SERVICE/DRAWING FUNCTIONS, DO NOT CHANGE///////////////
 
   const get_counts = async() => {
     console.log("fetching counts...")
@@ -209,34 +181,57 @@ mark {
     })
   }
 
-  function list_of_non_matched(jobtext, techs){
-    console.log("test")
-    matched = jobtext.match(/(([ ]?[A-Z][A-Za-z0-9+-]*){1,})/g)
-    non_listed = new Set([])
-    for (var i in matched){
-      matched[i] = matched[i].trim()
-      // console.log(techs.split(", "))
-      if (!techs.toLowerCase().split(", ").includes(matched[i].toLowerCase())){
-        non_listed.add(matched[i])
-      }
-    }
-    non_listed = Array.from(non_listed)
-    not_found.innerHTML = non_listed.join(" | ")
-  }
 
-  x = document.cookie.split(";");
-  for (var i in x){
-    if (x[i].includes("token")){
-      token.value = x[i].split("=")[1]
-      get_counts()
-    } else {
-      analyst.value = x[i].split("=")[1]
-      fetch_all(analyst.value)
-    }
-    if (x[i].includes("counter")){
-      counter = x[i].split("=")[1] - 1;
+function process_text(text){
+  var txttostore = '<p>' + text.replace(/\n/g, "</p>\n<p>") + '</p>';
+  job_textarea.innerHTML = txttostore;
+  highlight_text();
+  marked = document.getElementsByTagName("mark");
+  [].forEach.call(marked, function(marked_el){
+    marked_el.addEventListener("click", function(event){
+      if (found_techs.value == "" || found_techs.value == "none"){
+        found_techs.value = event.target.innerHTML.trim();
+      } else {
+        found_techs.value += ", " + event.target.innerHTML.trim();
+      }
+      event.target.style.backgroundColor = "orange";
+    })
+  })
+}
+
+function highlight_text(){
+  var instance = new Mark(job_textarea);
+  instance.markRegExp(/(([ ]?[A-Z][A-Za-z0-9+-]*){1,})/gm)
+  var instance2 = new Mark(not_found);
+  instance2.markRegExp(/(([ ]?[A-Z][A-Za-z0-9+-]*){1,})/gm)
+}
+
+function list_of_non_matched(jobtext, techs){
+  matched = jobtext.match(/(([ ]?[A-Z][A-Za-z0-9+-]*){1,})/g)
+  non_listed = new Set([])
+  for (var i in matched){
+    matched[i] = matched[i].trim()
+    if (!techs.toLowerCase().split(", ").includes(matched[i].toLowerCase())){
+      non_listed.add(matched[i])
     }
   }
+  non_listed = Array.from(non_listed)
+  not_found.innerHTML = non_listed.join(" | ")
+}
+
+x = document.cookie.split(";");
+for (var i in x){
+  if (x[i].includes("token")){
+    token.value = x[i].split("=")[1]
+    get_counts()
+  } else {
+    analyst.value = x[i].split("=")[1]
+    fetch_all(analyst.value)
+  }
+  if (x[i].includes("counter")){
+    counter = x[i].split("=")[1] - 1;
+  }
+}
 
 
 
