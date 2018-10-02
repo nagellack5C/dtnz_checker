@@ -124,7 +124,6 @@ mark {
     }
     console.log(counter)
     nav.innerHTML = (parseInt(counter) + 1) + "/" + Object.keys(techs_fetched).length
-    document.cookie = "counter=" + counter;
     tech_name.innerHTML = techs_fetched[counter].tech_name + " (" + techs_fetched[counter].tech_id + ")";
     tech_name.href = "https://www.datanyze.com/admin/?tab=technologies&tech_id=" + techs_fetched[counter].tech_id;
     tech_link.href = techs_fetched[counter].tech_link;
@@ -305,9 +304,6 @@ mark {
       analyst = x[i].split("=")[1];
       analyst_name.value = analyst;
       fetch_all(analyst)
-    }
-    if (x[i].includes("counter")){
-      counter = x[i].split("=")[1];
     }
   }
 
