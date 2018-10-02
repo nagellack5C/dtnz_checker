@@ -40,7 +40,7 @@ mark {
 
 <body>
   <div align="center">
-    <input id="token" placeholder="enter token" value=""></input>
+    <input id="token" placeholder="enter token" value="LQvZpFAypOqcF4Wwt8juHIHMCtjNgXDo"></input>
     <select onChange="fetch_all(this.value)" id="analyst_name">
       <option value="none" selected="selected">None</option>
       <option value="0">Rusin</option>
@@ -60,8 +60,8 @@ mark {
         <div>
             <div><img id="logo"></img></div>
             <button id="comeback"><</button>
-            <button id="save">Save</button>
-            <button id="next">></button>
+            <button id="save">Checked!</button>
+            <!-- <button id="next">></button> -->
         </div>
     </div>
   </div>
@@ -89,7 +89,8 @@ mark {
 
   save_btn.addEventListener("click", save)
   prev_btn.addEventListener("click", prev)
-  next_btn.addEventListener("click", next)
+  // next_btn.addEventListener("click", next)
+  let_them_use_buttons()
 
   function fetch_all(name){
     document.cookie = "username=" + analyst_name.value;
@@ -112,6 +113,7 @@ mark {
   }
 
   function show_data(){
+
     if (counter < 0){
       counter = 0;
     }
@@ -167,6 +169,22 @@ mark {
       job_textarea.value = "Select your name from the list!"
     }
   }
+
+  function let_them_use_buttons(){
+    document.addEventListener("keyup", function(event) {
+      event.preventDefault();
+      if (event.keyCode == 39){
+        next_btn.click();
+      }
+      if (event.keyCode == 37){
+        prev_btn.click();
+      }
+      if (event.keyCode == 32){
+        save_btn.click();
+      }
+    })
+  }
+
 
   function compare(){
     mnf = []
