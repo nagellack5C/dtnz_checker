@@ -114,6 +114,8 @@ mark {
 
   function show_data(){
 
+    get_counts();
+
     if (counter < 0){
       counter = 0;
     }
@@ -161,9 +163,9 @@ mark {
         body: JSON.stringify( { "$set" : { "checked": "yes" } } ) }
       ).then(function(){
         techs_fetched[counter].checked = "yes";
+        push_stats();
         next();
         analysts[analyst_name.value] += 1;
-        update_stats();
       })
     } else {
       job_textarea.value = "Select your name from the list!"
@@ -185,6 +187,22 @@ mark {
     })
   }
 
+  function push_stats(){
+    payload = {"$inc": {}}
+    payload["$inc"][analyst_name.value] = 1
+    console.log(payload)
+    fetch(
+      db_url + '?q={"type":"stats"}' + "&apiKey=" + token.value,
+      {method: "PUT",
+      headers: {
+        "Content-Type": "application/json; charset=utf-8"
+      },
+      // body: JSON.stringify( { "$set" : { "techs" : techs_textarea.value, "done": "yes" } } ) }
+      body: JSON.stringify( payload ) }
+    ).then(function(resp){
+      console.log(resp.json());
+    })
+  }
 
   function compare(){
     mnf = []
@@ -203,10 +221,13 @@ mark {
 
   const get_counts = async() => {
     console.log("fetching counts...")
-    const response = await fetch(db_url + '?q={"checked": "yes"}' + "&apiKey=" + token.value);
+    const response = await fetch(db_url + '?q={"type":"stats"}' + "&apiKey=" + token.value);
     const json = await response.json();
-    for (var i in json){
-      analysts[json[i].analyst] += 1
+    console.log(json);
+    for (var i in analysts){
+      if (analysts.hasOwnProperty(i)){
+        analysts[i] = json[0][i]
+      }
     }
     update_stats();
   }
@@ -220,8 +241,9 @@ mark {
 
   function update_stats(){
     document.getElementById("stats").innerHTML = ""
+    names = ["rusin", "nabiullin", "sitdikov", "tazetdinov"]
     Object.keys(analysts).forEach(function(name){
-      document.getElementById("stats").innerHTML = document.getElementById("stats").innerHTML + name + ": " + analysts[name] + " "
+      document.getElementById("stats").innerHTML = document.getElementById("stats").innerHTML + names[name] + ": " + analysts[name] + " "
     })
   }
 
@@ -269,6 +291,8 @@ mark {
     text = '<mark data-markjs="true">' + text + "</mark>";
     return text;
   }
+
+
 
   x = document.cookie.split(";");
   for (var i in x){
