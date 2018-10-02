@@ -1,0 +1,276 @@
+<html>
+
+<style type="text/css" media="screen">
+
+.textAreaColumn{
+    width:100%;
+}
+.textAreaColumn div{
+    float:left;
+    width:50%;
+    padding:10px;
+    box-sizing: border-box;
+}
+
+.textAreaColumn div span{
+    display:block;
+    text-align:center;
+}
+
+.textAreaColumn div div{
+    box-sizing: border-box;
+    width:100%;
+    /* border:3px solid red; */
+    /* height:80%;*/
+}
+
+#logo {
+    box-sizing: border-box;
+    width:400px;
+    height:400px;
+    border:3px solid red;
+    float: none;
+}
+
+mark {
+  cursor: pointer;
+}
+
+</style>
+
+<body>
+  <div align="center">
+    <input id="token" placeholder="enter token" value=""></input>
+    <select onChange="fetch_all(this.value)" id="analyst_name">
+      <option value="none" selected="selected">None</option>
+      <option value="0">Rusin</option>
+      <option value="1">Nabiullin</option>
+      <option value="2">Sitdikov</option>
+      <option value="3">Tazetdinov</option>
+    </select>
+    <div id="stats"></div>
+    <div id="nav"></div>
+    <div class="textAreaColumn" align="center">
+        <div>
+            <a id="tech_name" target="_blank"></a><br>
+            <a id="tech_link"></a>
+            <span id="tech_link2" align="center"></span>
+            <div id="tech_desc" align="justify"></div>
+        </div>
+        <div>
+            <div><img id="logo"></img></div>
+            <button id="comeback"><</button>
+            <button id="save">Save</button>
+            <button id="next">></button>
+        </div>
+    </div>
+  </div>
+</body>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js"></script>
+
+<script type="text/javascript">
+
+  console.log("cookies: " + document.cookie);
+
+  save_btn = document.getElementById("save")
+  prev_btn = document.getElementById("comeback")
+  next_btn = document.getElementById("next")
+  db_url = "https://api.mlab.com/api/1/databases/job_dtnz/collections/tech_logos"
+  techs_fetched = {}
+  token = document.getElementById("token")
+  counter = 0
+  analysts = {
+    "0": 0,
+    "1": 0,
+    "2": 0,
+    "3": 0
+  }
+
+  save_btn.addEventListener("click", save)
+  prev_btn.addEventListener("click", prev)
+  next_btn.addEventListener("click", next)
+
+  function fetch_all(name){
+    document.cookie = "username=" + analyst_name.value;
+    document.cookie = "token=" + token.value;
+    if (analyst_name.value == "none"){
+      alert("Select your name from the list!");
+    } else {
+        console.log("fetching techs...")
+        fetch(
+        // db_url + '?q={"name": "' + name + '", "done": "no"}' + "&apiKey=" + token.value)
+        db_url + '?q={"check_id": ' + name + ', "checked": "no"}' + "&apiKey=" + token.value)
+        .then(function(resp){
+          return (resp.json())
+        })
+        .then(function(json){
+          techs_fetched = json;
+          show_data();
+      })
+    }
+  }
+
+  function show_data(){
+    if (counter < 0){
+      counter = 0;
+    }
+    if (counter > Object.keys(techs_fetched).length - 1){
+      counter = Object.keys(techs_fetched).length - 1;
+    }
+    console.log(counter)
+    nav.innerHTML = (parseInt(counter) + 1) + "/" + Object.keys(techs_fetched).length
+    document.cookie = "counter=" + counter;
+    tech_name.innerHTML = techs_fetched[counter].tech_name + " (" + techs_fetched[counter].tech_id + ")";
+    tech_name.href = "https://www.datanyze.com/admin/?tab=technologies&tech_id=" + techs_fetched[counter].tech_id;
+    tech_link.href = techs_fetched[counter].tech_link;
+    tech_link.innerHTML = techs_fetched[counter].tech_link;
+    tech_link2.href = techs_fetched[counter].tech_link;
+    tech_link2.innerHTML = techs_fetched[counter].tech_domain;
+    tech_desc.innerHTML = techs_fetched[counter].tech_desc;
+    logo.src = techs_fetched[counter].logo_link;
+    if (techs_fetched[counter].checked == "yes"){
+      logo.style.borderColor = "green"
+    } else {
+      logo.style.borderColor = "red"
+    }
+    console.log(techs_fetched[counter]);
+  }
+
+  function next(){
+    counter ++;
+    show_data();
+  }
+
+  function prev(){
+    counter --;
+    show_data();
+  }
+
+  function save(){
+    if (analyst_name.value != "none"){
+      fetch(
+        db_url + "/" + techs_fetched[counter]._id.$oid + "?apiKey=" + token.value,
+        {method: "PUT",
+        headers: {
+          "Content-Type": "application/json; charset=utf-8"
+        },
+        // body: JSON.stringify( { "$set" : { "techs" : techs_textarea.value, "done": "yes" } } ) }
+        body: JSON.stringify( { "$set" : { "checked": "yes" } } ) }
+      ).then(function(){
+        techs_fetched[counter].checked = "yes";
+        next();
+        analysts[analyst_name.value] += 1;
+        update_stats();
+      })
+    } else {
+      job_textarea.value = "Select your name from the list!"
+    }
+  }
+
+  function compare(){
+    mnf = []
+    for (var i in all_techs){
+      if (jobs_fetched[counter].job_desc.includes(all_techs[i])){
+        if (!found_techs.value.split(", ").includes(all_techs[i])){
+          matched_not_found.push(all_techs[i])
+          mnf.push(markify(all_techs[i]))
+        }
+      }
+    }
+    diff.innerHTML = mnf.join(", ")
+  }
+
+///////////////SERVICE/DRAWING FUNCTIONS, DO NOT CHANGE///////////////
+
+  const get_counts = async() => {
+    console.log("fetching counts...")
+    const response = await fetch(db_url + '?q={"checked": "yes"}' + "&apiKey=" + token.value);
+    const json = await response.json();
+    for (var i in json){
+      analysts[json[i].analyst] += 1
+    }
+    update_stats();
+  }
+
+  const get_all_techs = async() => {
+    console.log("fetching all techs...");
+    const response = await fetch(db_url + '?q={"type": "all_techs"}' + "&apiKey=" + token.value);
+    const json = await response.json();
+    all_techs = json[0].techs.split(",")
+  }
+
+  function update_stats(){
+    document.getElementById("stats").innerHTML = ""
+    Object.keys(analysts).forEach(function(name){
+      document.getElementById("stats").innerHTML = document.getElementById("stats").innerHTML + name + ": " + analysts[name] + " "
+    })
+  }
+
+
+  function process_text(text){
+    var txttostore = '<p>' + text.replace(/\n/g, "</p>\n<p>") + '</p>';
+    job_textarea.innerHTML = txttostore;
+    highlight_text();
+    marked = document.getElementsByTagName("mark");
+    [].forEach.call(marked, function(marked_el){
+      marked_el.addEventListener("click", function(event){
+        if (found_techs.value == "" || found_techs.value == "none"){
+          found_techs.value = event.target.innerHTML.trim();
+        } else {
+          found_techs.value += ", " + event.target.innerHTML.trim();
+        }
+        event.target.style.backgroundColor = "orange";
+      })
+    })
+  }
+
+  function highlight_text(){
+    var instance = new Mark(job_textarea);
+    instance.markRegExp(/(([ ]?[A-Z][A-Za-z0-9+-]*){1,})/gm)
+    var instance2 = new Mark(not_found);
+    instance2.markRegExp(/(([ ]?[A-Z][A-Za-z0-9+-]*){1,})/gm)
+  }
+
+  function list_of_non_matched(jobtext, techs){
+    console.log(matched_not_found);
+    matched = jobtext.match(/(([ ]?[A-Z][A-Za-z0-9+-]*){1,})/g)
+    non_listed = new Set([])
+    for (var i in matched){
+      matched[i] = matched[i].trim()
+      if (!techs.split(", ").includes(matched[i])
+          && !matched_not_found.join(",").split(",").includes(matched[i])){
+        non_listed.add(matched[i])
+      }
+    }
+    non_listed = Array.from(non_listed)
+    not_found.innerHTML = non_listed.join(" | ")
+  }
+
+  function markify(text){
+    text = '<mark data-markjs="true">' + text + "</mark>";
+    return text;
+  }
+
+  x = document.cookie.split(";");
+  for (var i in x){
+    if (x[i].includes("token")){
+      token.value = x[i].split("=")[1]
+      get_counts()
+    }
+    if (x[i].includes("username")){
+      console.log(x[i])
+      analyst = x[i].split("=")[1];
+      analyst_name.value = analyst;
+      fetch_all(analyst)
+    }
+    if (x[i].includes("counter")){
+      counter = x[i].split("=")[1];
+    }
+  }
+
+
+
+</script>
+
+</html>
