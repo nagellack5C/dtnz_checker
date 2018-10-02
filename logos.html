@@ -40,7 +40,7 @@ mark {
 
 <body>
   <div align="center">
-    <input id="token" placeholder="enter token" value="LQvZpFAypOqcF4Wwt8juHIHMCtjNgXDo"></input>
+    <input id="token" placeholder="enter token" value=""></input>
     <select onChange="fetch_all(this.value)" id="analyst_name">
       <option value="none" selected="selected">None</option>
       <option value="0">Rusin</option>
@@ -114,7 +114,7 @@ mark {
 
   function show_data(){
 
-    get_counts();
+    setTimeout(get_counts, 500);
 
     if (counter < 0){
       counter = 0;
@@ -165,7 +165,7 @@ mark {
         techs_fetched[counter].checked = "yes";
         push_stats();
         next();
-        analysts[analyst_name.value] += 1;
+        // analysts[analyst_name.value] += 1;
       })
     } else {
       job_textarea.value = "Select your name from the list!"
