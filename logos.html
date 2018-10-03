@@ -40,7 +40,7 @@ mark {
 
 <body>
   <div align="center">
-    <input id="token" placeholder="enter token" value=""></input>
+    <input id="token" placeholder="enter token" value="LQvZpFAypOqcF4Wwt8juHIHMCtjNgXDo"></input>
     <select onChange="fetch_all(this.value)" id="analyst_name">
       <option value="none" selected="selected">None</option>
       <option value="0">Rusin</option>
@@ -61,9 +61,18 @@ mark {
             <div><img id="logo"></img></div>
             <button id="comeback"><</button>
             <button id="save">Checked!</button>
-            <!-- <button id="next">></button> -->
+            <button id="next">></button>
         </div>
     </div>
+
+    <div align="justify" id="rules" style="width:50%;">Check if this logo belongs to this technology.
+      If there is no logo or the logo is wrong - find and upload a new one (click the first link in the left field to open the Tech Edit page).
+      All logos should be 400x400 png or jpeg.<br>
+      Press Space to mark a tech as checked, press left arrow to go back to the previous tech. Careful: if you press F5 your checked techs won't load.
+
+    <br>  <ul>IMPORTANT:<li>Use tech logos instead of vendor logos where possible</li>
+<li>Use vendor logos in case there's no tech logo available</li>
+<li>Don't use GitHub's logo if the tech is just a package published on GitHub</li></ul></div>
   </div>
 </body>
 
@@ -89,7 +98,7 @@ mark {
 
   save_btn.addEventListener("click", save)
   prev_btn.addEventListener("click", prev)
-  // next_btn.addEventListener("click", next)
+  next_btn.addEventListener("click", next)
   let_them_use_buttons()
 
   function fetch_all(name){
@@ -115,6 +124,12 @@ mark {
   function show_data(){
 
     setTimeout(get_counts, 500);
+    // nbclone = next_btn.cloneNode();
+    if (techs_fetched[counter].checked == "no"){
+      next_btn.hidden = true;
+    } else {
+      next_btn.hidden = false;
+    }
 
     if (counter < 0){
       counter = 0;
@@ -151,7 +166,7 @@ mark {
   }
 
   function save(){
-    if (analyst_name.value != "none"){
+    if (analyst_name.value != "none" && techs_fetched[counter].checked != "yes"){
       fetch(
         db_url + "/" + techs_fetched[counter]._id.$oid + "?apiKey=" + token.value,
         {method: "PUT",
@@ -175,7 +190,9 @@ mark {
     document.addEventListener("keyup", function(event) {
       event.preventDefault();
       if (event.keyCode == 39){
-        next_btn.click();
+        if (!next_btn.hidden){
+          next_btn.click();
+        }
       }
       if (event.keyCode == 37){
         prev_btn.click();
