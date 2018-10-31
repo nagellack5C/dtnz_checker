@@ -119,8 +119,9 @@ mark {
           "Content-Type": "application/json; charset=utf-8"
         },
         // body: JSON.stringify( { "$set" : { "techs" : techs_textarea.value, "done": "yes" } } ) }
-        body: JSON.stringify( { "$set" : { "checked": "yes" } } ) }
+        body: JSON.stringify( { "$set" : { "checked": "yes", "new_desc": desc_fix.value } } ) }
       ).then(function(){
+        console.log(desc_fix.value);
         techs_fetched[counter].checked = "yes";
         push_stats();
         next();
