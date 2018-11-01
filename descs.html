@@ -23,8 +23,10 @@ mark {
     <div id="nav"></div>
     <div class="textAreaColumn" align="center">
             <a id="tech_name" target="_blank"></a><br>
-            <a id="tech_link"></a>
-            <span id="tech_link2" align="center"></span><br><br>
+            <a id="tech_link"></a><br><br>
+            <a id="tech_link2" align="center"></a><br><br>
+            <span id="tech_category" align="center"></span><br><br>
+            <a id="vendor_link" align="center"></a><br><br>
             <div style="width:40%;" align="center"><div id="tech_desc" align="justify"></div></div><br>
             <textarea id="desc_fix" style="width:40%;height:20%;"></textarea></br>
             <button align="center" id="comeback"><</button>
@@ -95,9 +97,19 @@ mark {
     tech_link.href = "https://www.datanyze.com/admin/?tab=technologies&tech_id=" + techs_fetched[counter].tech_id;
     tech_link.innerHTML = "https://www.datanyze.com/admin/?tab=technologies&tech_id=" + techs_fetched[counter].tech_id;
     tech_link2.href = techs_fetched[counter].tech_link;
-    tech_link2.innerHTML = techs_fetched[counter].tech_domain;
+    tech_link2.innerHTML = "tech link: " + techs_fetched[counter].tech_link;
+    vendor_link.href = techs_fetched[counter].vendor_link;
+    vendor_link.innerHTML = "vendor link: " + techs_fetched[counter].vendor_link;
+    tech_category.innerHTML = techs_fetched[counter].category;
     tech_desc.innerHTML = techs_fetched[counter].desc;
     desc_fix.value = techs_fetched[counter].desc;
+    if (techs_fetched[counter].checked == "no"){
+      tech_desc.style.border = "1px solid";
+      tech_desc.style.borderColor = "red";
+    } else {
+      tech_desc.style.border = "1px solid";
+      tech_desc.style.borderColor = "green";
+    }
     console.log(techs_fetched[counter]);
   }
 
@@ -112,7 +124,7 @@ mark {
   }
 
   function save(){
-    if (analyst_name.value != "none" && techs_fetched[counter].checked != "yes"){
+    if (analyst_name.value != "none"){
       fetch(
         db_url + "/" + techs_fetched[counter]._id.$oid + "?apiKey=" + token.value,
         {method: "PUT",
@@ -129,7 +141,7 @@ mark {
         // analysts[analyst_name.value] += 1;
       })
     } else {
-      job_textarea.value = "Select your name from the list!"
+      alert("Select your name from the list!")
     }
   }
 
