@@ -89,6 +89,7 @@ mark {
     }
     console.log(counter)
     nav.innerHTML = (parseInt(counter) + 1) + "/" + Object.keys(techs_fetched).length
+    document.cookie = "counter=" + counter;
     tech_name.innerHTML = techs_fetched[counter].tech_name + " (" + techs_fetched[counter].tech_id + ")";
     tech_name.href = "https://www.datanyze.com/admin/?tab=technologies&tech_id=" + techs_fetched[counter].tech_id;
     tech_link.href = "https://www.datanyze.com/admin/?tab=technologies&tech_id=" + techs_fetched[counter].tech_id;
