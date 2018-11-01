@@ -65,7 +65,7 @@ mark {
         console.log("fetching techs...")
         fetch(
         // db_url + '?q={"name": "' + name + '", "done": "no"}' + "&apiKey=" + token.value)
-        db_url + '?q={"analyst_id": ' + name + ', "checked": "no"}' + "&apiKey=" + token.value)
+        db_url + '?q={"analyst_id": ' + name + '}' + "&apiKey=" + token.value)
         .then(function(resp){
           return (resp.json())
         })
@@ -130,7 +130,7 @@ mark {
     } else {
       job_textarea.value = "Select your name from the list!"
     }
-  } 
+  }
 
   function let_them_use_buttons(){
     document.addEventListener("keyup", function(event) {
@@ -267,6 +267,9 @@ mark {
       analyst = x[i].split("=")[1];
       analyst_name.value = analyst;
       fetch_all(analyst)
+    }
+    if (x[i].includes("counter")){
+      counter = x[i].split("=")[1];
     }
   }
 
