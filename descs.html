@@ -2,7 +2,9 @@
 
 <style type="text/css" media="screen">
 
-
+div, a, textarea, button, select {
+  font-family: "Helvetica";
+}
 
 mark {
   cursor: pointer;
@@ -23,10 +25,10 @@ mark {
     <div id="nav"></div>
     <div class="textAreaColumn" align="center">
             <a id="tech_name" target="_blank"></a><br>
-            <a id="tech_link"></a><br><br>
-            <a id="tech_link2" align="center"></a><br><br>
+            <a id="tech_link" target="_blank"></a><br><br>
+            <a id="tech_link2" align="center" target="_blank"></a><br><br>
             <span id="tech_category" align="center"></span><br><br>
-            <a id="vendor_link" align="center"></a><br><br>
+            <a id="vendor_link" align="center" target="_blank"></a><br><br>
             <div style="width:40%;" align="center"><div id="tech_desc" align="justify"></div></div><br>
             <textarea id="desc_fix" style="width:40%;height:20%;"></textarea></br>
             <button align="center" id="comeback"><</button>
@@ -38,7 +40,7 @@ mark {
 
 <script type="text/javascript">
 
-  console.log("cookies: " + document.cookie);
+  // console.log("cookies: " + document.cookie);
 
   save_btn = document.getElementById("save")
   prev_btn = document.getElementById("comeback")
@@ -56,7 +58,7 @@ mark {
   save_btn.addEventListener("click", save)
   prev_btn.addEventListener("click", prev)
   next_btn.addEventListener("click", next)
-  let_them_use_buttons()
+  // let_them_use_buttons()
 
   function fetch_all(name){
     document.cookie = "username=" + analyst_name.value;
@@ -98,11 +100,18 @@ mark {
     tech_link.innerHTML = "https://www.datanyze.com/admin/?tab=technologies&tech_id=" + techs_fetched[counter].tech_id;
     tech_link2.href = techs_fetched[counter].tech_link;
     tech_link2.innerHTML = "tech link: " + techs_fetched[counter].tech_link;
-    vendor_link.href = techs_fetched[counter].vendor_link;
+    vendor_link.href = "http://" + techs_fetched[counter].vendor_link;
     vendor_link.innerHTML = "vendor link: " + techs_fetched[counter].vendor_link;
     tech_category.innerHTML = techs_fetched[counter].category;
     tech_desc.innerHTML = techs_fetched[counter].desc;
-    desc_fix.value = techs_fetched[counter].desc;
+    console.log(techs_fetched[counter].new_desc);
+    if (techs_fetched[counter].new_desc.length > 0){
+      console.log("loading new desc")
+      desc_fix.value = techs_fetched[counter].new_desc
+    } else {
+      console.log("loading old desc")
+      desc_fix.value = techs_fetched[counter].desc
+    }
     if (techs_fetched[counter].checked == "no"){
       tech_desc.style.border = "1px solid";
       tech_desc.style.borderColor = "red";
@@ -110,7 +119,7 @@ mark {
       tech_desc.style.border = "1px solid";
       tech_desc.style.borderColor = "green";
     }
-    console.log(techs_fetched[counter]);
+    // console.log(techs_fetched[counter]);
   }
 
   function next(){
@@ -134,8 +143,9 @@ mark {
         // body: JSON.stringify( { "$set" : { "techs" : techs_textarea.value, "done": "yes" } } ) }
         body: JSON.stringify( { "$set" : { "checked": "yes", "new_desc": desc_fix.value } } ) }
       ).then(function(){
-        console.log(desc_fix.value);
         techs_fetched[counter].checked = "yes";
+        console.log(desc_fix.value)
+        techs_fetched[counter].new_desc = desc_fix.value;
         push_stats();
         next();
         // analysts[analyst_name.value] += 1;
@@ -165,7 +175,7 @@ mark {
   function push_stats(){
     payload = {"$inc": {}}
     payload["$inc"][analyst_name.value] = 1
-    console.log(payload)
+    // console.log(payload)
     fetch(
       db_url + '?q={"type":"stats"}' + "&apiKey=" + token.value,
       {method: "PUT",
@@ -175,7 +185,7 @@ mark {
       // body: JSON.stringify( { "$set" : { "techs" : techs_textarea.value, "done": "yes" } } ) }
       body: JSON.stringify( payload ) }
     ).then(function(resp){
-      console.log(resp.json());
+      // console.log(resp.json());
     })
   }
 
@@ -198,7 +208,7 @@ mark {
     console.log("fetching counts...")
     const response = await fetch(db_url + '?q={"type":"stats"}' + "&apiKey=" + token.value);
     const json = await response.json();
-    console.log(json);
+    // console.log(json);
     for (var i in analysts){
       if (analysts.hasOwnProperty(i)){
         analysts[i] = json[0][i]
@@ -208,7 +218,7 @@ mark {
   }
 
   const get_all_techs = async() => {
-    console.log("fetching all techs...");
+    // console.log("fetching all techs...");
     const response = await fetch(db_url + '?q={"type": "all_techs"}' + "&apiKey=" + token.value);
     const json = await response.json();
     all_techs = json[0].techs.split(",")
@@ -248,7 +258,7 @@ mark {
   }
 
   function list_of_non_matched(jobtext, techs){
-    console.log(matched_not_found);
+    // console.log(matched_not_found);
     matched = jobtext.match(/(([ ]?[A-Z][A-Za-z0-9+-]*){1,})/g)
     non_listed = new Set([])
     for (var i in matched){
@@ -276,7 +286,7 @@ mark {
       get_counts()
     }
     if (x[i].includes("username")){
-      console.log(x[i])
+      // console.log(x[i])
       analyst = x[i].split("=")[1];
       analyst_name.value = analyst;
       fetch_all(analyst)
