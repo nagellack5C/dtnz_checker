@@ -235,9 +235,12 @@ mark {
   function update_stats(){
     document.getElementById("stats").innerHTML = ""
     names = ["Makzhanova", "Klimov", "Tsvetkov"]
+    sum = 0
     Object.keys(analysts).forEach(function(name){
       document.getElementById("stats").innerHTML = document.getElementById("stats").innerHTML + names[name] + ": " + analysts[name] + " "
+      sum += analysts[name];
     })
+    document.getElementById("stats").innerHTML = document.getElementById("stats").innerHTML + "sum: " + sum;
   }
 
 
