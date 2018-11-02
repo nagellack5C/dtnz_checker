@@ -70,7 +70,7 @@ mark {
         console.log("fetching techs...")
         fetch(
         // db_url + '?q={"name": "' + name + '", "done": "no"}' + "&apiKey=" + token.value)
-        db_url + '?q={"analyst_id": ' + name + '}' + "&apiKey=" + token.value)
+        db_url + '?q={"analyst_id": ' + name + '}&s={"tech_id":1}' + "&apiKey=" + token.value)
         .then(function(resp){
           return (resp.json())
         })
@@ -106,6 +106,7 @@ mark {
     tech_category.innerHTML = techs_fetched[counter].category;
     tech_desc.innerHTML = techs_fetched[counter].desc;
     if (techs_fetched[counter].hasOwnProperty("comment")) {
+      console.log("comment exists");
       comments.value = techs_fetched[counter].comment;
     } else {
       comments.value = "";
@@ -153,6 +154,7 @@ mark {
           push_stats();
         }
         techs_fetched[counter].checked = "yes";
+        techs_fetched[counter].comment = comments.value;
         console.log(desc_fix.value)
         techs_fetched[counter].new_desc = desc_fix.value;
         next();
