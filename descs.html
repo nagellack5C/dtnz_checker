@@ -31,6 +31,7 @@ mark {
             <a id="vendor_link" align="center" target="_blank"></a><br><br>
             <div style="width:40%;" align="center"><div id="tech_desc" align="justify"></div></div><br>
             <textarea id="desc_fix" style="width:40%;height:20%;"></textarea></br>
+            <textarea id="comments" style="width:40%;height:5%;" placeholder="comments"></textarea></br>
             <button align="center" id="comeback"><</button>
             <button align="center" id="save">Checked!</button>
             <button align="center" id="next">></button>
@@ -104,6 +105,11 @@ mark {
     vendor_link.innerHTML = "vendor link: " + techs_fetched[counter].vendor_link;
     tech_category.innerHTML = techs_fetched[counter].category;
     tech_desc.innerHTML = techs_fetched[counter].desc;
+    if (techs_fetched[counter].hasOwnProperty("comment")) {
+      comments.value = techs_fetched[counter].comment;
+    } else {
+      comments.value = "";
+    }
     console.log(techs_fetched[counter].new_desc);
     if (techs_fetched[counter].new_desc.length > 0){
       console.log("loading new desc")
@@ -141,12 +147,14 @@ mark {
           "Content-Type": "application/json; charset=utf-8"
         },
         // body: JSON.stringify( { "$set" : { "techs" : techs_textarea.value, "done": "yes" } } ) }
-        body: JSON.stringify( { "$set" : { "checked": "yes", "new_desc": desc_fix.value } } ) }
+        body: JSON.stringify( { "$set" : { "checked": "yes", "new_desc": desc_fix.value, "comment": comments.value } } ) }
       ).then(function(){
+        if (techs_fetched[counter].checked == "no"){
+          push_stats();
+        }
         techs_fetched[counter].checked = "yes";
         console.log(desc_fix.value)
         techs_fetched[counter].new_desc = desc_fix.value;
-        push_stats();
         next();
         // analysts[analyst_name.value] += 1;
       })
