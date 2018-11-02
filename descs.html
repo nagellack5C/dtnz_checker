@@ -25,11 +25,11 @@ mark {
     <div id="nav"></div>
     <div class="textAreaColumn" align="center">
             <a id="tech_name" target="_blank"></a><br>
-            <a id="tech_link" target="_blank"></a><br><br>
             <a id="tech_link2" align="center" target="_blank"></a><br><br>
+            <a id="google_search" target="_blank">search Google</a><br>
             <span id="tech_category" align="center"></span><br><br>
             <a id="vendor_link" align="center" target="_blank"></a><br><br>
-            <div style="width:40%;" align="center"><div id="tech_desc" align="justify"></div></div><br>
+            <div style="width:40%;height:15%;overflow:auto;" align="center"><div id="tech_desc" align="justify"></div></div><br>
             <textarea id="desc_fix" style="width:40%;height:20%;"></textarea></br>
             <textarea id="comments" style="width:40%;height:5%;" placeholder="comments"></textarea></br>
             <button align="center" id="comeback"><</button>
@@ -97,8 +97,9 @@ mark {
     document.cookie = "counter=" + counter;
     tech_name.innerHTML = techs_fetched[counter].tech_name + " (" + techs_fetched[counter].tech_id + ")";
     tech_name.href = "https://www.datanyze.com/admin/?tab=technologies&tech_id=" + techs_fetched[counter].tech_id;
-    tech_link.href = "https://www.datanyze.com/admin/?tab=technologies&tech_id=" + techs_fetched[counter].tech_id;
-    tech_link.innerHTML = "https://www.datanyze.com/admin/?tab=technologies&tech_id=" + techs_fetched[counter].tech_id;
+    google_search.href = "https://www.google.com/search?q=" + techs_fetched[counter].tech_name;
+    // tech_link.href = "https://www.datanyze.com/admin/?tab=technologies&tech_id=" + techs_fetched[counter].tech_id;
+    // tech_link.innerHTML = "https://www.datanyze.com/admin/?tab=technologies&tech_id=" + techs_fetched[counter].tech_id;
     tech_link2.href = techs_fetched[counter].tech_link;
     tech_link2.innerHTML = "tech link: " + techs_fetched[counter].tech_link;
     vendor_link.href = "http://" + techs_fetched[counter].vendor_link;
